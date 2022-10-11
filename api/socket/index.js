@@ -19,7 +19,7 @@ module.exports = httpServer => {
         const eventHandlers = await getContents(path.join(__dirname,'events'))
         for(const abs of eventHandlers){
             let rel = path.relative(path.join(__dirname,'events'),abs);
-            rel = rel.replaceAll('\\',':').replace('.js','');
+            rel = rel.replaceAll('\\',':').replaceAll('/',':').replace('.js','');
             socket.on(rel, wrapAsync(require(abs)(io,socket)));
         }
     })
