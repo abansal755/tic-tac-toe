@@ -5,9 +5,11 @@ const wrapAsync = require('../utils/wrapAsync');
 const getContents = require('../utils/getContents');
 
 module.exports = httpServer => {
+    const FRONTEND_SERVER_URL = process.env.FRONTEND_SERVER_URL || 'http://localhost:5000';
+    
     const io = new Server(httpServer, {
         cors: {
-            origin: 'http://localhost:5000'
+            origin: FRONTEND_SERVER_URL
         }
     });
 

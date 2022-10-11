@@ -9,7 +9,8 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Listening to port ${PORT}`));
 
 (async () => {
-    await mongoose.connect('mongodb://localhost/auth-server');
+    const DB_URL = process.env.DB_URL || 'mongodb://localhost/auth-server';
+    await mongoose.connect(DB_URL);
     console.log('MongoDB running');
 })();
 
