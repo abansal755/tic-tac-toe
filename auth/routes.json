@@ -1,0 +1,15 @@
+[
+    {
+        "path": "/api/users",
+        "method": "GET",
+        "middlewares": [
+            "authorizeToken"
+        ],
+        "description": "get user details from token"
+    },
+    {
+        "path": "/api/users",
+        "method": "POST",
+        "description": "create a user with random username and get its token"
+    }
+]
