@@ -4,7 +4,7 @@ const path = require('path');
 const wrapAsync = require('../utils/wrapAsync');
 const getContents = require('../utils/getContents');
 
-module.exports = httpServer => {
+module.exports = async httpServer => {
     const FRONTEND_SERVER_URL = process.env.FRONTEND_SERVER_URL || 'http://localhost:5000';
     
     const io = new Server(httpServer, {
@@ -15,8 +15,8 @@ module.exports = httpServer => {
 
     io.use(authorize);
 
-    io.on('connection', async socket => {
-        const eventHandlers = await getContents(path.join(__dirname,'events'))
+    const eventHandlers = await getContents(path.join(__dirname,'events'));
+    io.on('connection', socket => {
         for(const abs of eventHandlers){
             let rel = path.relative(path.join(__dirname,'events'),abs);
             rel = rel.replaceAll('\\',':').replaceAll('/',':').replace('.js','');
