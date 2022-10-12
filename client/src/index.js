@@ -5,8 +5,8 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import { AuthContextProvider } from './contexts/AuthContext';
 
-window.AUTH_SERVER_URL = 'http://localhost:3000';
-window.API_SERVER_URL = 'http://localhost:4000';
+window.AUTH_SERVER_URL = process.env.REACT_APP_AUTH_SERVER_URL || 'http://localhost:3000';
+window.API_SERVER_URL = process.env.REACT_APP_API_SERVER_URL || 'http://localhost:4000';
 
 const theme = createTheme({
 	palette: {
