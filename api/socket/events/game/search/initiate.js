@@ -31,19 +31,11 @@ module.exports = (io,socket) => {
 
         // create a Game
         const game = new Game({
-            players: [
-                {
-                    socketId: socket.id,
-                    style: 'cross'
-                },
-                {
-                    socketId: otherUser.socketId,
-                    style: 'cross'
-                }
-            ]
+            players: [socket.id,otherUser.socketId]
         });
+        const styles = ['cross','cross'];
         const idx = Math.floor(Math.random() * 2);
-        game.players[idx].style = 'circle';
+        styles[idx] = 'circle';
         await game.save();
 
         // Inform both users
@@ -53,7 +45,7 @@ module.exports = (io,socket) => {
                 username: otherUser.username,
                 socketId: otherUser.socketId
             },
-            style: game.players[0].style,
+            style: styles[0],
             yourTurn: firstTurn === 0
         });
         io.of('/').sockets.get(otherUser.socketId).emit('game:search:initiate', {
@@ -61,8 +53,8 @@ module.exports = (io,socket) => {
                 username,
                 socketId: socket.id
             },
-            style: game.players[1].style,
+            style: styles[1],
             yourTurn: firstTurn === 1
-        })
+        });
     }
 }

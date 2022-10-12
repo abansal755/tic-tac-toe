@@ -61,6 +61,19 @@ const Online = () => {
         history.replace('/');
     }, []);
 
+    // play again event
+    useSocketHandler('game:replay', ({style,yourTurn}) => {
+        console.log('Replay::', {
+            style,
+            yourTurn
+        });
+        setGrid(getInitialGridState());
+        setIsYourTurn(yourTurn);
+        setAreYouWinner(null);
+        setStyle(style);
+        setIsDraw(false);
+    }, []);
+
     // Checking if there is any winner
     if(areYouWinner === null && isThereAWinner(grid)){
         if(isYourTurn){
@@ -92,6 +105,10 @@ const Online = () => {
         socket.emit('game:terminate');
         history.replace('/');
     }
+
+    const playAgainBtnClickHandler = () => {
+        socket.emit('game:replay');
+    }
     
     return (
         <Grid container direction='column' justifyContent='center' alignItems='center' height='100vh' rowSpacing={3}>
@@ -110,6 +127,9 @@ const Online = () => {
                         <GameGrid grid={grid} onCellClick={cellClickHandler} disabled={!isYourTurn}/>
                     </Grid>
                     <Grid item>
+                        {(areYouWinner !== null || isDraw) && (
+                            <Button variant="contained" sx={{ marginRight: 1 }} onClick={playAgainBtnClickHandler}>Play again</Button>
+                        )}
                         <Button variant='contained' onClick={() => setIsDialogOpen(true)}>Back</Button>
                         <Dialog open={isDialogOpen}>
                             <DialogTitle>Alert</DialogTitle>

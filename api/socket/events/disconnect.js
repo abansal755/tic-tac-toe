@@ -8,10 +8,10 @@ module.exports = (io,socket) => {
         
         // terminate if part of any game
         const game = await Game.findOneAndDelete({
-            'players.socketId': socket.id
+            players: socket.id
         }).exec();
         if(!game) return;
-        const otherSocketId = game.players.filter(player => player.socketId !== socket.id)[0].socketId;
+        const otherSocketId = game.players.filter(player => player !== socket.id)[0];
         io.of('/').sockets.get(otherSocketId).emit('game:terminate');
     }
 }
