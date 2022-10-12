@@ -37,13 +37,19 @@ const Online = () => {
     useEffect(() => {
         if(!socket) return;
         socket.emit('game:search:initiate');
-        socket.on('game:search:initiate', ({error,opponent,style,yourTurn}) => {
+
+        const initiateHandler = ({error,opponent,style,yourTurn}) => {
             if(error)
                 return console.error(error.message);
             setOpponent(opponent);
             setStyle(style);
             setIsYourTurn(yourTurn);
-        });
+        };
+        socket.on('game:search:initiate', initiateHandler);
+
+        return () => {
+            socket.off('game:search:initiate', initiateHandler);
+        }
     }, [socket]);
 
     // Handling game events
@@ -64,6 +70,11 @@ const Online = () => {
             history.replace('/');
         }
         socket.on('game:terminate', terminateHandler);
+
+        return () => {
+            socket.off('game:move', moveListener);
+            socket.off('game:terminate', terminateHandler);
+        }
     }, [style]);    
 
     // Checking if there is any winner
