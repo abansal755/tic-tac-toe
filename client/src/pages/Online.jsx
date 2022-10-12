@@ -5,6 +5,7 @@ import GameGrid from "../components/GameGrid";
 import FindingOpponent from "../components/Online/FindingOpponent";
 import GameInfo from "../components/Online/GameInfo";
 import { useAuthContext } from "../contexts/AuthContext";
+import useSocketHandler from "../hooks/useSocketHandler";
 import getInitialGridState from "../utils/getInitialGridState";
 import isItDraw from "../utils/isItDraw";
 import isThereAWinner from "../utils/isThereAWinner";
@@ -37,45 +38,28 @@ const Online = () => {
     useEffect(() => {
         if(!socket) return;
         socket.emit('game:search:initiate');
-
-        const initiateHandler = ({error,opponent,style,yourTurn}) => {
-            if(error)
-                return console.error(error.message);
-            setOpponent(opponent);
-            setStyle(style);
-            setIsYourTurn(yourTurn);
-        };
-        socket.on('game:search:initiate', initiateHandler);
-
-        return () => {
-            socket.off('game:search:initiate', initiateHandler);
-        }
     }, [socket]);
 
-    // Handling game events
-    useEffect(() => {
-        if(!style) return;
-        
-        // Game move event
-        const moveListener = idx => {
-            setGrid(prev => {
-                return [...(prev.slice(0,idx)),opponentStyle,...(prev.slice(idx+1))];
-            });
-            setIsYourTurn(prev => !prev);
-        };
-        socket.on('game:move', moveListener);
+    useSocketHandler('game:search:initiate', ({error,opponent,style,yourTurn}) => {
+        if(error)
+            return console.error(error.message);
+        setOpponent(opponent);
+        setStyle(style);
+        setIsYourTurn(yourTurn);
+    }, []);
 
-        // Game terminate event
-        const terminateHandler = () => {
-            history.replace('/');
-        }
-        socket.on('game:terminate', terminateHandler);
+    // Game move event
+    useSocketHandler('game:move', idx => {
+        setGrid(prev => {
+            return [...(prev.slice(0,idx)),opponentStyle,...(prev.slice(idx+1))];
+        });
+        setIsYourTurn(prev => !prev);
+    }, [style]);
 
-        return () => {
-            socket.off('game:move', moveListener);
-            socket.off('game:terminate', terminateHandler);
-        }
-    }, [style]);    
+    // Game terminate event
+    useSocketHandler('game:terminate', () => {
+        history.replace('/');
+    }, []);
 
     // Checking if there is any winner
     if(areYouWinner === null && isThereAWinner(grid)){

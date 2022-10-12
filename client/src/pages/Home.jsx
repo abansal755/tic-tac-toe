@@ -2,6 +2,7 @@ import { Button, Grid, Typography } from "@mui/material";
 import { useAuthContext } from "../contexts/AuthContext";
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from "react";
+import useSocketHandler from "../hooks/useSocketHandler";
 
 const Home = () => {
     const { username, socket } = useAuthContext();
@@ -10,14 +11,11 @@ const Home = () => {
 	useEffect(() => {
 		if(!socket) return;
 		socket.emit('stats');
-		
-		const statsHandler = count => setNumOnlinePlayers(count);
-		socket.on('stats', statsHandler);
-
-		return () => {
-			socket.off('stats', statsHandler);
-		}
 	}, [socket]);
+
+	useSocketHandler('stats', count => {
+		setNumOnlinePlayers(count);
+	}, []);
     
     return (
         <Grid container direction='column' alignItems='center' justifyContent='center' height='100vh' rowSpacing={1}>
