@@ -11,7 +11,9 @@ const options = {
 
 if(process.env.NODE_ENV === 'production'){
     const httpsAgent = new https.Agent({
-        cert: fs.readFileSync(path.join(__dirname,'../../cert/akshitbansal_me.crt'))
+        key: fs.readFileSync(path.join(__dirname,'../../cert/key.pem')),
+        cert: fs.readFileSync(path.join(__dirname,'../../cert/akshitbansal_me.crt')),
+        ca: fs.readFileSync(path.join(__dirname,'../../cert/akshitbansal_me.ca-bundle'))
     });
     options.httpsAgent = httpsAgent;
 }
