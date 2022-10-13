@@ -6,7 +6,15 @@ const wrapAsync = require('./utils/wrapAsync');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Listening to port ${PORT}`));
+let httpServer;
+if(process.env.NODE_ENV === 'production'){
+    httpServer = https.createServer({
+        key: fs.readFileSync(path.join(__dirname,'../cert/key.pem')),
+        cert: fs.readFileSync(path.join(__dirname,'../cert/akshitbansal_me.crt'))
+    }, app);
+    httpServer.listen(PORT,console.log(`Listening to port ${PORT}`));
+}
+else httpServer = app.listen(PORT, console.log(`Listening to port ${PORT}`));
 
 (async () => {
     const DB_URL = process.env.DB_URL || 'mongodb://localhost/auth-server';
