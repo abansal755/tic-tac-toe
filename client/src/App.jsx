@@ -7,7 +7,7 @@ import Online from "./pages/Online";
 
 const App = () => {
 	useEffect(() => {
-		if(Notification && Notification.permission === 'default')
+		if(window.Notification && Notification.permission === 'default')
 			Notification.requestPermission();
 	}, []);
 	
