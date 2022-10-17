@@ -52,7 +52,7 @@ const Online = () => {
         setOpponent(opponent);
         setStyle(style);
         setIsYourTurn(yourTurn);
-        if(document.hidden && Notification.permission === 'granted')
+        if(document.hidden && Notification && Notification.permission === 'granted')
             new Notification(`Game started with ${opponent.username}`);
     }, []);
 
