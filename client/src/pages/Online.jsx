@@ -9,6 +9,9 @@ import useSocketHandler from "../hooks/useSocketHandler";
 import getInitialGridState from "../utils/getInitialGridState";
 import isItDraw from "../utils/isItDraw";
 import isThereAWinner from "../utils/isThereAWinner";
+import useAudio from '../hooks/useAudio';
+import moveMp3 from '../assets/audio/move.mp3';
+import gameStartMp3 from '../assets/audio/game-start.mp3';
 
 const Online = () => {
     const { socket } = useAuthContext();
@@ -20,6 +23,8 @@ const Online = () => {
     const [isDraw,setIsDraw] = useState(false);
     const [isDialogOpen,setIsDialogOpen] = useState(false);
     const history = useHistory();
+    const moveAudio = useAudio(moveMp3);
+    const gameStartAudio = useAudio(gameStartMp3);
 
     let opponentStyle;
     if(style === 'cross') opponentStyle = 'circle';
@@ -43,13 +48,17 @@ const Online = () => {
     useSocketHandler('game:search:initiate', ({error,opponent,style,yourTurn}) => {
         if(error)
             return console.error(error.message);
+        gameStartAudio.playFromStart();
         setOpponent(opponent);
         setStyle(style);
         setIsYourTurn(yourTurn);
+        if(document.hidden && Notification.permission === 'granted')
+            new Notification(`Game started with ${opponent.username}`);
     }, []);
 
     // Game move event
     useSocketHandler('game:move', idx => {
+        moveAudio.playFromStart();
         setGrid(prev => {
             return [...(prev.slice(0,idx)),opponentStyle,...(prev.slice(idx+1))];
         });
@@ -81,6 +90,7 @@ const Online = () => {
             setIsYourTurn(false);
         }
         else setAreYouWinner(true);
+        gameStartAudio.playFromStart();
     }
 
     // Checking if the game is draw
@@ -94,6 +104,7 @@ const Online = () => {
     const cellClickHandler = (idx) => {
         if(!isYourTurn) return;
         if(grid[idx] !== 'none') return;
+        moveAudio.playFromStart();
         setGrid(prev => {
             return [...(prev.slice(0,idx)),style,...(prev.slice(idx+1))];
         });

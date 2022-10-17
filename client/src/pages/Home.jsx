@@ -35,9 +35,6 @@ const Home = () => {
 			<Grid item>
 				<Button variant="contained" component={Link} to='/online' replace>Play multiplayer online</Button>
 			</Grid>
-            <Grid item>
-				<Button variant="contained">Invite a friend</Button>
-			</Grid>
 		</Grid>
     )
 }

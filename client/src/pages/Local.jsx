@@ -7,6 +7,8 @@ import isItDraw from "../utils/isItDraw";
 import isThereAWinner from "../utils/isThereAWinner";
 import getInitialGridState from "../utils/getInitialGridState";
 import getInititalPlayers from "../utils/getInitialPlayers";
+import useAudio from '../hooks/useAudio';
+import moveMp3 from '../assets/audio/move.mp3';
 
 const Local = () => {
     const [grid,setGrid] = useState(getInitialGridState);
@@ -14,6 +16,7 @@ const Local = () => {
     const [currentPlayer,setCurrentPlayer] = useState(0);
     const [winner,setWinner] = useState(null);
     const [isDialogOpen,setIsDialogOpen] = useState(false);
+    const moveAudio = useAudio(moveMp3);
 
     if(isThereAWinner(grid)){
         if(currentPlayer !== -1) {
@@ -34,6 +37,7 @@ const Local = () => {
             return [...(prev.slice(0,idx)), players[currentPlayer], ...(prev.slice(idx + 1))];
         });
         setCurrentPlayer(curr => (curr + 1) % 2);
+        moveAudio.playFromStart();
     }
 
     const playAgainBtnClickHandler = () => {

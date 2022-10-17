@@ -1,11 +1,16 @@
 import { CssBaseline } from "@mui/material";
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import { Route, Switch } from "react-router-dom";
 import Home from "./pages/Home";
 import Local from "./pages/Local";
 import Online from "./pages/Online";
 
 const App = () => {
+	useEffect(() => {
+		if(Notification && Notification.permission === 'default')
+			Notification.requestPermission();
+	}, []);
+	
 	return (
 		<Fragment>
 			<CssBaseline/>
