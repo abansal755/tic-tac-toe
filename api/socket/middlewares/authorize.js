@@ -1,5 +1,5 @@
 const axios = require("../../lib/axios");
-const socketMappingRepo = require("../../redis/models/SocketMapping");
+const socketMappingRepoPromise = require("../../redis/models/SocketMapping");
 
 module.exports = async (socket, next) => {
 	const { token } = socket.handshake.auth;
@@ -12,6 +12,7 @@ module.exports = async (socket, next) => {
 		});
 		const { username } = res.data;
 
+		const socketMappingRepo = await socketMappingRepoPromise;
 		const socketMapping = socketMappingRepo.createEntity({
 			username,
 			socketId: socket.id,

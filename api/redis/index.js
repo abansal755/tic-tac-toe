@@ -1,7 +1,5 @@
 const { Client } = require("redis-om");
 
-exports.client = new Client();
+const client = new Client();
 
-exports.connect = (url) => {
-	exports.client.open(url);
-};
+module.exports = client.open(process.env.REDIS_URL || "redis://localhost:6379");

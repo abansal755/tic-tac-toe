@@ -5,7 +5,8 @@ const mongoose = require("mongoose");
 const https = require("https");
 const fs = require("fs");
 const path = require("path");
-const redis = require("./redis");
+const setupSocket = require("./socket");
+const client = require("./redis");
 
 const app = express();
 
@@ -16,7 +17,7 @@ const app = express();
 })();
 
 (async () => {
-	redis.connect(process.env.REDIS_URL || "redis://localhost:6379");
+	await client;
 	console.log("Redis connected");
 })();
 
@@ -37,5 +38,4 @@ if (process.env.NODE_ENV === "production") {
 	httpServer.listen(PORT, console.log(`Listening to port ${PORT}`));
 } else httpServer = app.listen(PORT, console.log(`Listening to port ${PORT}`));
 
-const setupSocket = require("./socket");
 setupSocket(httpServer);

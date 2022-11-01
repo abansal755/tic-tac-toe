@@ -1,5 +1,5 @@
 const { Entity, Schema } = require("redis-om");
-const { client } = require("../");
+const clientPromise = require("../");
 
 class SocketMapping extends Entity {}
 
@@ -9,4 +9,9 @@ const socketMappingSchema = new Schema(SocketMapping, {
 	lookingForOpponent: { type: "boolean" },
 });
 
-module.exports = client.fetchRepository(socketMappingSchema);
+module.exports = (async () => {
+	const client = await clientPromise;
+	const repo = client.fetchRepository(socketMappingSchema);
+	repo.createIndex();
+	return repo;
+})();

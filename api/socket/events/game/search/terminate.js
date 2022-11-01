@@ -1,7 +1,8 @@
-const socketMappingRepo = require("../../../../redis/models/SocketMapping");
+const socketMappingRepoPromise = require("../../../../redis/models/SocketMapping");
 
 module.exports = (io, socket) => {
 	return async () => {
+		const socketMappingRepo = await socketMappingRepoPromise;
 		const socketMapping = await socketMappingRepo
 			.search()
 			.where("socketId")

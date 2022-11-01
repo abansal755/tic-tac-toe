@@ -1,9 +1,10 @@
 const Game = require("../../models/Game");
-const socketMappingRepo = require("../../redis/models/SocketMapping");
+const socketMappingRepoPromise = require("../../redis/models/SocketMapping");
 
 module.exports = (io, socket) => {
 	return async () => {
 		// delete socket mapping
+		const socketMappingRepo = await socketMappingRepoPromise;
 		const socketMapping = await socketMappingRepo
 			.search()
 			.where("socketId")
