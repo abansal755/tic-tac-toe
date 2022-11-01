@@ -1,8 +1,8 @@
-const SocketMapping = require('../../models/SocketMapping');
+const socketMappingRepo = require("../../redis/models/SocketMapping");
 
-module.exports = (io,socket) => {
-    return async () => {
-        const count = await SocketMapping.estimatedDocumentCount();
-        socket.emit('stats', count);
-    }
-}
+module.exports = (io, socket) => {
+	return async () => {
+		const count = await socketMappingRepo.search().returnCount();
+		socket.emit("stats", count);
+	};
+};
