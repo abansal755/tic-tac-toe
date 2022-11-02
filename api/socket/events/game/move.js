@@ -1,11 +1,16 @@
-const Game = require("../../../models/Game");
+const gameRepoPromise = require("../../../redis/models/Game");
 
-module.exports = (io,socket) => {
-    return async idx => {
-        const game = await Game.findOne({
-            players: socket.id
-        });
-        const otherSocketId = game.players.filter(player => player !== socket.id)[0];
-        io.of('/').sockets.get(otherSocketId).emit('game:move', idx);
-    }
-}
+module.exports = (io, socket) => {
+	return async (idx) => {
+		const gameRepo = await gameRepoPromise;
+		const game = await gameRepo
+			.search()
+			.where("players")
+			.contain(socket.id)
+			.first();
+		const otherSocketId = game.players.filter(
+			(player) => player !== socket.id
+		)[0];
+		io.of("/").sockets.get(otherSocketId).emit("game:move", idx);
+	};
+};

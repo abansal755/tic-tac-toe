@@ -1,4 +1,4 @@
-const Game = require("../../models/Game");
+const gameRepoPromise = require("../../redis/models/Game");
 const socketMappingRepoPromise = require("../../redis/models/SocketMapping");
 
 module.exports = (io, socket) => {
@@ -13,9 +13,12 @@ module.exports = (io, socket) => {
 		await socketMappingRepo.remove(socketMapping.entityId);
 
 		// terminate if part of any game
-		const game = await Game.findOneAndDelete({
-			players: socket.id,
-		}).exec();
+		const gameRepo = await gameRepoPromise;
+		const game = await gameRepo
+			.search()
+			.where("players")
+			.contain(socket.id)
+			.first();
 		if (!game) return;
 		const otherSocketId = game.players.filter(
 			(player) => player !== socket.id

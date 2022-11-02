@@ -1,24 +1,29 @@
 require("dotenv").config();
 
 const express = require("express");
-const mongoose = require("mongoose");
 const https = require("https");
 const fs = require("fs");
 const path = require("path");
 const setupSocket = require("./socket");
 const client = require("./redis");
+const socketMappingRepoPromise = require("./redis/models/SocketMapping");
+const gameRepoPromise = require("./redis/models/Game");
 
 const app = express();
 
 (async () => {
-	const DB_URL = process.env.DB_URL || "mongodb://localhost/tic-tac-toe-api";
-	await mongoose.connect(DB_URL);
-	console.log("MongoDB is running");
-})();
-
-(async () => {
 	await client;
 	console.log("Redis connected");
+
+	if (process.env.NODE_ENV !== "production") {
+		[socketMappingRepoPromise, gameRepoPromise].forEach(async (promise) => {
+			const repo = await promise;
+			const ids = await repo.search().allIds();
+			ids.forEach((id) => {
+				repo.remove(id);
+			});
+		});
+	}
 })();
 
 app.use(express.json());

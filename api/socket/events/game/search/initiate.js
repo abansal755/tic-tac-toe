@@ -1,4 +1,4 @@
-const Game = require("../../../../models/Game");
+const gameRepoPromise = require("../../../../redis/models/Game");
 const socketMappingRepoPromise = require("../../../../redis/models/SocketMapping");
 
 module.exports = (io, socket) => {
@@ -42,13 +42,14 @@ module.exports = (io, socket) => {
 		await socketMappingRepo.save(otherUser);
 
 		// create a Game
-		const game = new Game({
+		const gameRepo = await gameRepoPromise;
+		const game = gameRepo.createEntity({
 			players: [socket.id, otherUser.socketId],
 		});
 		const styles = ["cross", "cross"];
 		const idx = Math.floor(Math.random() * 2);
 		styles[idx] = "circle";
-		await game.save();
+		await gameRepo.save(game);
 
 		// Inform both users
 		const firstTurn = Math.floor(Math.random() * 2);
