@@ -19,7 +19,7 @@ if(process.env.NODE_ENV === 'production'){
 else httpServer = app.listen(PORT, console.log(`Listening to port ${PORT}`));
 
 (async () => {
-    const DB_URL = process.env.DB_URL || 'mongodb://localhost/auth-server';
+    const DB_URL = process.env.DB_URL || 'mongodb://localhost/tic-tac-toe-auth';
     await mongoose.connect(DB_URL);
     console.log('MongoDB running');
 })();

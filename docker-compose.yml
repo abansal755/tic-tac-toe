@@ -1,0 +1,24 @@
+services:
+  auth:
+    build: ./auth
+    environment:
+      - PORT=${TIC_TAC_TOE_AUTH_PORT}
+      - DB_URL=${TIC_TAC_TOE_AUTH_DB_URL}
+    network_mode: host
+  api:
+    build: ./api
+    environment:
+      - PORT=${TIC_TAC_TOE_API_PORT}
+      - DB_URL=${TIC_TAC_TOE_API_DB_URL}
+      - FRONTEND_SERVER_URL=${TIC_TAC_TOE_FRONTEND_SERVER_URL}
+      - AUTH_SERVER_URL=${TIC_TAC_TOE_AUTH_URL}
+    network_mode: host
+  ui:
+    build:
+      context: .
+      args:
+        REACT_APP_AUTH_SERVER_URL: ${TIC_TAC_TOE_AUTH_URL}
+        REACT_APP_API_SERVER_URL: ${TIC_TAC_TOE_API_URL}
+    environment:
+      - PORT=${TIC_TAC_TOE_FRONTEND_PORT}
+    network_mode: host
